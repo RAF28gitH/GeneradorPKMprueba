@@ -98,16 +98,38 @@
 
         function exportPNG() {
             const element = document.getElementById("pokemon-images");
-            html2canvas(element).then(function(canvas) {
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL();
-                link.download = 'pokemon-aleatorios.png';
-                link.click();
+
+            // Esperar a que todas las imágenes estén completamente cargadas
+            const images = element.getElementsByTagName("img");
+            let loadedImages = 0;
+
+            // Verificar que todas las imágenes estén cargadas
+            Array.from(images).forEach((img) => {
+                img.onload = function() {
+                    loadedImages++;
+                    // Cuando todas las imágenes estén cargadas, generar la captura
+                    if (loadedImages === images.length) {
+                        // Llamar a html2canvas solo después de que todas las imágenes estén listas
+                        html2canvas(element).then(function(canvas) {
+                            const link = document.createElement('a');
+                            link.href = canvas.toDataURL('image/png'); // Especificamos PNG
+                            link.download = 'pokemon-aleatorios.png';
+                            link.click();
+                        }).catch(function(error) {
+                            console.error('Error al generar la imagen:', error);
+                        });
+                    }
+                };
+
+                // Si la imagen ya está cargada, contarla inmediatamente
+                if (img.complete) {
+                    loadedImages++;
+                }
             });
         }
     </script>
 
-    <!-- Incluyendo html2canvas desde CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <!-- Incluyendo html2canvas desde CDN versión 1.4.1 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
