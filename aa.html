@@ -8,52 +8,62 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 50px;
-            margin-left: 20px;
-            margin-right: 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+        #content {
+            width: 100%;
+            max-width: 800px; /* Limitar el tamaño en pantallas grandes */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin-bottom: 20px;
         }
         #pokemon-images {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 columnas por defecto */
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            justify-items: center;
             margin-top: 20px;
         }
-
-        /* Ajuste para pantallas pequeñas (móviles) */
-        @media (max-width: 768px) {
-            #pokemon-images {
-                grid-template-columns: 1fr; /* Una columna */
-            }
-        }
-
-        /* Ajuste para pantallas medianas (tablets) */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            #pokemon-images {
-                grid-template-columns: repeat(2, 1fr); /* Dos columnas en tablet */
-            }
-        }
-
         .pokemon {
-            width: 120px;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
         }
-
-        footer {
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #footer {
             margin-top: 30px;
-            font-size: 14px;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <h1>Generador de 9 Pokémon Aleatorios</h1>
-    <button onclick="generatePokemons()">Generar Pokémon</button>
-    <div id="pokemon-images"></div>
-    <br>
-    <button onclick="exportToPNG()">Exportar como PNG</button>
-    <footer>
-        <p>With ChatGPT<br>RAF28</p>
-    </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <div id="content">
+        <h1>Generador de 9 Pokémon Aleatorios</h1>
+        <button onclick="generatePokemons()">Generar Pokémon</button>
+        <div id="pokemon-images"></div>
+        <button onclick="exportPNG()">Exportar como PNG</button>
+        <div id="footer">With ChatGPT<br>RAF28</div>
+    </div>
 
     <script>
         function generatePokemons() {
@@ -86,35 +96,18 @@
             }
         }
 
-        function exportToPNG() {
-            let pokemonContainer = document.getElementById("pokemon-images");
-            
-            // Enfoque para la exportación: forzar la cuadrícula 3x3 al exportar
-            pokemonContainer.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 columnas para la exportación
-
-            html2canvas(pokemonContainer).then(function(canvas) {
-                let ctx = canvas.getContext('2d');
-                
-                // Establecer las propiedades de la marca de agua
-                ctx.font = '20px Arial';
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Blanco con algo de transparencia
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
-
-                // Añadir la marca de agua en la parte inferior
-                let text = "With ChatGPT\nRAF28";
-                let yPosition = canvas.height - 20; // Ubicar la marca de agua en la parte inferior
-
-                // Dibujar el texto de la marca de agua
-                ctx.fillText(text, canvas.width / 2, yPosition);
-
-                // Crear un enlace para descargar la imagen como PNG
-                let link = document.createElement('a');
-                link.download = 'pokemons.png';
-                link.href = canvas.toDataURL("image/png");
+        function exportPNG() {
+            const element = document.getElementById("pokemon-images");
+            html2canvas(element).then(function(canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL();
+                link.download = 'pokemon-aleatorios.png';
                 link.click();
             });
         }
     </script>
+
+    <!-- Incluyendo html2canvas desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
 </body>
 </html>
