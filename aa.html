@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Pokémon Aleatorios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        #pokemon-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columnas por defecto */
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Ajuste para pantallas pequeñas (móviles) */
+        @media (max-width: 768px) {
+            #pokemon-images {
+                grid-template-columns: 1fr; /* Una columna */
+            }
+        }
+
+        /* Ajuste para pantallas medianas (tablets) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            #pokemon-images {
+                grid-template-columns: repeat(2, 1fr); /* Dos columnas en tablet */
+            }
+        }
+
+        .pokemon {
+            width: 120px;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de 9 Pokémon Aleatorios</h1>
+    <button onclick="generatePokemons()">Generar Pokémon</button>
+    <div id="pokemon-images"></div>
+    <br>
+    <button onclick="exportToPNG()">Exportar como PNG</button>
+    <footer>
+        <p>With ChatGPT<br>RAF28</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+    <script>
+        function generatePokemons() {
+            let pokemons = [];
+            let pokemonContainer = document.getElementById("pokemon-images");
+            pokemonContainer.innerHTML = ""; // Limpiar las imágenes anteriores
+
+            while (pokemons.length < 9) {
+                let randomPokemon = Math.floor(Math.random() * 1025) + 1; // Generar un número entre 1 y 1025
+                if (!pokemons.includes(randomPokemon)) {
+                    pokemons.push(randomPokemon);
+                    // Crear la imagen para ese Pokémon
+                    let imageUrl = generatePokemonImageUrl(randomPokemon);
+                    let imgElement = document.createElement("img");
+                    imgElement.src = imageUrl;
+                    imgElement.alt = `Pokémon ${randomPokemon}`;
+                    imgElement.className = "pokemon";
+                    pokemonContainer.appendChild(imgElement);
+                }
+            }
+        }
+
+        function generatePokemonImageUrl(pokemonNumber) {
+            if (pokemonNumber < 10) {
+                return `https://assets.pokemon.com/assets/cms2/img/pokedex/full/00${pokemonNumber}.png`;
+            } else if (pokemonNumber < 100) {
+                return `https://assets.pokemon.com/assets/cms2/img/pokedex/full/0${pokemonNumber}.png`;
+            } else {
+                return `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokemonNumber}.png`;
+            }
+        }
+
+        function exportToPNG() {
+            let pokemonContainer = document.getElementById("pokemon-images");
+            
+            // Enfoque para la exportación: forzar la cuadrícula 3x3 al exportar
+            pokemonContainer.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 columnas para la exportación
+
+            html2canvas(pokemonContainer).then(function(canvas) {
+                let ctx = canvas.getContext('2d');
+                
+                // Establecer las propiedades de la marca de agua
+                ctx.font = '20px Arial';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // Blanco con algo de transparencia
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+
+                // Añadir la marca de agua en la parte inferior
+                let text = "With ChatGPT\nRAF28";
+                let yPosition = canvas.height - 20; // Ubicar la marca de agua en la parte inferior
+
+                // Dibujar el texto de la marca de agua
+                ctx.fillText(text, canvas.width / 2, yPosition);
+
+                // Crear un enlace para descargar la imagen como PNG
+                let link = document.createElement('a');
+                link.download = 'pokemons.png';
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
